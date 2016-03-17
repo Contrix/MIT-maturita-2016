@@ -1,0 +1,41 @@
+;Po  každém zmáčknutí tlačítka 5 zarotuje (instrukce rotace) LED (na P1) zprava  doleva přes celý Byte 3x čas  460ms
+;Verze A – 3x   Verze B – před verzi A vlož bliknnutí  všemi LED intervalu 
+
+2,8s(rozsvit a zhasni)
+
+start:	jb p2.3, $
+	call blik
+	jmp start
+
+blik: 	mov a, #11111111b
+	mov p1, a
+	call zpp
+	mov r6, #24
+	mov a, #00000001b
+bl:	mov p1, a
+	rl a
+	call zp
+	djnz r6, bl
+	ret
+
+zp:	mov tmod, #00000001b;460ms
+	mov r7, #8
+	mov th0, #01Fh
+	mov tl0, #064h
+	setb tr0
+ot:	clr tf0
+	jnb tf0, $
+	djnz r7, ot
+	clr tr0
+	ret
+
+zpp:	mov tmod, #00000001b;2800ms
+	mov r7, #43
+	mov th0, #001h
+	mov tl0, #0A4h
+	setb tr0
+zpot:	clr tf0
+	jnb tf0, $
+	djnz r7, zpot
+	clr tr0
+	ret	
