@@ -1,0 +1,44 @@
+Rotace LED zprava doleva 0,23 s je LED rozsícená 0,4s LED zhasne ( v době zhasnutí 0,4s se ozve zvuk  1400 Hz) Verze A – stále dokola  ;  Verze B – program zopakuj 2 x  a LED zhasni
+
+start:	mov a, #00000001b
+	mov r5, #2
+smycka:	mov p1, a
+	call zp230
+	mov p1, #00000000b
+	call ton
+	rl a
+	jmp smycka
+	;djnz r5, smycka
+	;mov p1, #00000000b
+	
+
+ton:	mov r7, #5
+tona:	mov r6, #112
+tonb:	setb p0.7
+	call zp03
+	clr p0.7
+	call zp03
+	djnz r6, tonb
+	djnz r7, tona
+	ret
+
+
+zp230:	mov tmod, #00000001b ;230ms
+	mov r4, #4
+	mov th0, #01fh
+	mov tl0, #064h
+	setb tr0
+zpa:	clr tf0
+	jnb tf0, $
+	djnz r4, zpa
+	clr tr0
+	ret
+
+zp03:	mov tmod, #00000001b ;357us
+	mov th0, #0FEh
+	mov tl0, #09Bh
+	setb tr0
+	clr tf0
+	jnb tf0, $
+	clr tr0
+	ret
