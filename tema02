@@ -1,0 +1,39 @@
+;Odlaď program rotace 0.LED(port P1)  3 x  doleva a 3 doprava přes celý byte. 
+;Čas  470ms(interval mezi LED). Potom rozsviť dolní polovinu LED a 4 x prohoď dolní a horní pol. pomocí instrukce SWAP. 
+;Zadání zrealizuj na IO ATMEL AT89C2051 – aralelní programování -na nepájivém poli.
+;Celý program verze A – stále dokola zrealizuj, verze B celý program zopakuj 7 x a vše zhasni.
+
+start:	mov a, #00000001b
+	mov r6, #23
+rla:	mov p1, a
+	call zp470
+	rl a
+	djnz r6, rla
+
+	mov r6, #24
+rlb:	mov p1, a
+	call zp470
+	rr a
+	djnz r6, rlb
+
+	mov r6, #4
+	mov a, #00001111b
+swapa:	swap a
+	mov p1, a
+	call zp470
+	djnz r6, swapa
+
+	jmp start
+
+
+zp470:	mov tmod, #00000001b
+	mov r7, #8
+	mov th0, #01ah
+	mov tl0, #82h
+	setb tr0
+aa:	clr tf0
+	jnb tf0, $
+	djnz r7, aa
+	clr tr0
+	ret
+
