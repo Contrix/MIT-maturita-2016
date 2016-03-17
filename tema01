@@ -1,0 +1,44 @@
+;Odlaď program  LED – 2 x rotace 0. Led přes celý byte (pomocí instrukce rotace) na P1 čas 0,48s  a výpis 4321  
+;interval 0,55s  na P3  na 7 segm. Program  zrealizuj na TEST DESK. Naprogramuj ATMEL – sériové programování. 
+;Stále dokola. Odevzdej Ing. Veselá do 30.3.2016
+
+start:	mov a, #11111110b
+	mov r6, #16
+ss:	mov p1, a
+	call zp480
+	rl a
+	djnz r6, ss
+
+	mov p3, #00011001b;4
+	call zp550
+	mov p3, #00110000b;3
+	call zp550
+	mov p3, #00100100b;2
+	call zp550
+	mov p3, #11111001b;1
+	call zp550
+	jmp start
+
+zp480:	mov tmod, #00000001b
+	mov r7, #8
+	mov th0, #0ach
+	mov tl0, #0f8h
+aa:	clr tf0
+	setb tr0
+	jnb tf0, $
+	djnz r7, aa
+	clr tr0
+	ret
+
+zp550:	mov tmod, #00000001b
+	mov r7, #9
+	mov th0, #09bh
+	mov tl0, #087h
+bb:	clr tf0
+	setb tr0
+	jnb tf0, $
+	djnz r7, bb
+	clr tr0
+	ret
+
+end
