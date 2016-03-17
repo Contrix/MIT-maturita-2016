@@ -1,0 +1,75 @@
+Po zmáčknutí TL7  se vygeneruje zvuk délky 0,35s f´= 900Hz 3x po sobě s mezerou 0,62s a následně zvuk f= 2500Hz délky 1s a ticho 1s Verze A – stále dokola    Verze B – program zopakuj 2 x  a zacykli na místě
+
+start:	
+
+smycka: jnb p2.6, tl
+	jmp smycka
+tl:	mov r5, #3
+tla:	call ton1
+	call ticho1
+	djnz r5, tla
+	call ton2
+	call ticho2
+	jmp start
+	
+
+ton1:	mov r7, #5
+ton1a:	mov r6, #63
+ton1b:	setb p0.7
+	call per1
+	clr p0.7
+	call per1
+	djnz r6, ton1b
+	djnz r7, ton1a
+	ret
+	
+
+per1:	mov tmod, #00000001b;555
+	mov th0, #0fdh
+	mov tl0, #0d5h
+	clr tf0
+	setb tr0
+	jnb tf0, $
+	clr tr0
+	ret
+
+ticho1:	mov tmod, #00000001b;620ms
+	mov r7, #10
+	mov th0, #0dh
+	mov tl0, #0d0h
+	setb tr0
+tich1a:	clr tf0
+	jnb tf0, $
+	djnz r7, tich1a
+	clr tr0
+	ret
+
+ton2:	mov r2, #250;2500Hz
+ton2a:	mov r1, #10
+ton2b:	setb p0.7
+	call per2
+	clr p0.7
+	call per2
+	djnz r1, ton2b
+	djnz r2, ton2a
+	ret
+
+per2:	mov tmod, #00000001b;200us
+	mov th0, #0ffh
+	mov tl0, #038h
+	clr tf0
+	setb tr0
+	jnb tf0, $
+	clr tr0
+	ret
+
+ticho2:	mov tmod, #00000001b;1sec
+	mov r3, #16
+	mov th0, #0bh
+	mov tl0, #0dch
+	setb tr0
+tich2a:	clr tf0
+	jnb tf0, $
+	djnz r3, tich2a
+	clr tr0
+	ret
